@@ -1,0 +1,294 @@
+{
+  "cleared_flags": [
+    "ai.smithery/infranodus-mcp-server-infranodus|src/tools/addProjectLearnings.ts|definition",
+    "ai.smithery/infranodus-mcp-server-infranodus|src/tools/submitWorkflowFeedback.ts|definition",
+    "ai.starreel/starreel|src/tools/produce.ts|save_handoff_toolchain",
+    "com.onkernel/kernel-mcp-server|src/lib/mcp/tools/vault-cards.ts|manage_vault_cards",
+    "com.onkernel/kernel-mcp-server|src/lib/mcp/tools/vault-items.ts|manage_vault_items",
+    "com.withruntime/runtime|packages/cloud-sdk/src/mcp.ts|runtime_wallet_open",
+    "io.github.Autario/autario-mcp|tools-apps.js|get_traction_overview",
+    "io.github.Octonove/crbro-memory|src/server.ts|crbro_space",
+    "io.github.aicanvas-me/aicanvas|mcp/src/index.ts|validate_usage",
+    "io.github.akutishevsky/nutrition-mcp|src/mcp.ts|log_weight",
+    "io.github.nirholas/three.ws|packages/avatar-agent-mcp/src/tools/spawn-avatar.js|spawn_avatar",
+    "io.github.nirholas/threews-3d-studio-free|packages/avatar-agent-mcp/src/tools/spawn-avatar.js|spawn_avatar",
+    "io.github.nirholas/threews-3d-studio|packages/avatar-agent-mcp/src/tools/spawn-avatar.js|spawn_avatar",
+    "io.github.nirholas/threews-agent|packages/avatar-agent-mcp/src/tools/spawn-avatar.js|spawn_avatar",
+    "io.github.nirholas/threews-grok|packages/avatar-agent-mcp/src/tools/spawn-avatar.js|spawn_avatar",
+    "io.github.nirholas/threews-pumpfun|packages/avatar-agent-mcp/src/tools/spawn-avatar.js|spawn_avatar",
+    "io.github.nirholas/threews-x402-bazaar|packages/avatar-agent-mcp/src/tools/spawn-avatar.js|spawn_avatar",
+    "io.github.noclickapp/noclick|backend/mcp_server.py|update_folders",
+    "io.github.plur-ai/plur|packages/mcp/src/tools.ts|plur_sync",
+    "io.github.uiNerd16/aicanvas|mcp/src/index.ts|validate_usage",
+    "io.github.vmware-skills/vmware-vks|vmware_vks/mcp_server/server.py|issue_tkc_kubeconfig",
+    "io.github.zw008/vmware-aria|vmware_aria/mcp_server/tools/alerts.py|get_alert",
+    "io.github.zw008/vmware-vks|vmware_vks/mcp_server/server.py|issue_tkc_kubeconfig"
+  ],
+  "extractor_version": "2",
+  "flagged_unique": {
+    "high": 172,
+    "medium": 294,
+    "watch": 165
+  },
+  "generated_at": "2026-11-20T20:42:51Z",
+  "jobs": {
+    "clone_failed": 3,
+    "no_repo": 25212,
+    "no_supported_source": 9728,
+    "ok": 29034,
+    "stale": 186,
+    "unreachable": 5067
+  },
+  "jobs_reused": 20480,
+  "largest_repos": [
+    {
+      "repo_url": "https://github.com/mrfentmen/awesome-mcps",
+      "servers": 174,
+      "tools": 18204
+    },
+    {
+      "repo_url": "https://github.com/mrfentmen/awesome-servers",
+      "servers": 1956,
+      "tools": 18204
+    },
+    {
+      "repo_url": "https://github.com/nirholas/universal-crypto-mcp",
+      "servers": 1,
+      "tools": 5547
+    },
+    {
+      "repo_url": "https://github.com/malamutemayhem/unclick-agent-native-endpoints",
+      "servers": 1,
+      "tools": 3667
+    },
+    {
+      "repo_url": "https://github.com/mcparmory/registry",
+      "servers": 76,
+      "tools": 3026
+    },
+    {
+      "repo_url": "https://github.com/codespar/mcp-dev-latam",
+      "servers": 127,
+      "tools": 2499
+    },
+    {
+      "repo_url": "https://github.com/royazran/mcp-ads",
+      "servers": 1,
+      "tools": 2380
+    },
+    {
+      "repo_url": "https://github.com/leocelis/stele",
+      "servers": 1,
+      "tools": 2004
+    },
+    {
+      "repo_url": "https://github.com/nirholas/sperax-crypto-mcp",
+      "servers": 1,
+      "tools": 1997
+    },
+    {
+      "repo_url": "https://github.com/klavis-ai/klavis",
+      "servers": 1,
+      "tools": 1725
+    },
+    {
+      "repo_url": "https://github.com/shakaran/symfony-agent-mcp",
+      "servers": 1,
+      "tools": 1702
+    },
+    {
+      "repo_url": "https://github.com/servosity/msp-skills",
+      "servers": 108,
+      "tools": 1594
+    },
+    {
+      "repo_url": "https://github.com/zachshallbetter/adobe-mcp",
+      "servers": 6,
+      "tools": 1196
+    },
+    {
+      "repo_url": "https://github.com/zachshallbetter/indesign-mcp-server",
+      "servers": 1,
+      "tools": 1196
+    },
+    {
+      "repo_url": "https://github.com/patsa2561-art/mneme-ai",
+      "servers": 1,
+      "tools": 1075
+    },
+    {
+      "repo_url": "https://github.com/aartiq/servicenow-mcp",
+      "servers": 3,
+      "tools": 1055
+    },
+    {
+      "repo_url": "https://github.com/ruvnet/claude-flow",
+      "servers": 1,
+      "tools": 1047
+    },
+    {
+      "repo_url": "https://github.com/mindstone/mcp-servers",
+      "servers": 40,
+      "tools": 1028
+    },
+    {
+      "repo_url": "https://github.com/hostinger/api-mcp-server",
+      "servers": 1,
+      "tools": 952
+    },
+    {
+      "repo_url": "https://github.com/nirholas/three.ws",
+      "servers": 51,
+      "tools": 841
+    },
+    {
+      "repo_url": "https://github.com/swkstudios/unifi-fabric-mcp-server",
+      "servers": 1,
+      "tools": 719
+    },
+    {
+      "repo_url": "https://github.com/salitronic/eda-agent",
+      "servers": 1,
+      "tools": 672
+    },
+    {
+      "repo_url": "https://github.com/akoskomuves/appstoreconnect-mcp",
+      "servers": 1,
+      "tools": 642
+    },
+    {
+      "repo_url": "https://github.com/homenshum/nodebench-ai",
+      "servers": 1,
+      "tools": 625
+    },
+    {
+      "repo_url": "https://github.com/dearlordylord/huly-mcp",
+      "servers": 1,
+      "tools": 614
+    }
+  ],
+  "levels": {
+    "high": 192,
+    "low": 1364,
+    "medium": 314,
+    "none": 39414168,
+    "watch": 177
+  },
+  "model_version": "watcher-lr-2",
+  "new_flags": [
+    "app.getautomata/automata|apps/web/server/mcp/tools/whatsapp/read-messages.ts|read-messages",
+    "au.com.kangaroogrowth/gbp-local-seo|src/index.js|read_site_reviews",
+    "business.munch/munch|src/mcp.ts|log_weight",
+    "cloud.agent-tools/agent-tools-mcp|directory/mcp_app.py|scan_mcp_safety",
+    "co.blueticks/blueticks|src/tool-defs/tools/chats.ts|chats",
+    "co.blueticks/blueticks|src/tool-defs/tools/groups.ts|groups",
+    "co.blueticks/blueticks|src/tool-defs/tools/report-capability-gap.ts|report_capability_gap",
+    "com.dustforge/demipass|mcp-server.js|demipass_onboard_service",
+    "com.jobmojito/jobmojito|media_upload.py|upload_media_file",
+    "com.okareo/okareo|src/tools/simulations.py|create_or_update_target",
+    "com.onkernel/kernel-mcp-server|src/lib/mcp/tools/api-keys.ts|manage_api_keys",
+    "com.upload-post/mcp|src/tools/feedback.ts|send_feedback",
+    "dev.modelmarket/mcp-security|scripts/openwebui-live/fixtures.mjs|send_message",
+    "io.github.4DA-Systems/4da-mcp-server|src/tools/dependency-check.ts|dependency_check",
+    "io.github.Abdk4Moura/xats|daemon/src/mcp/tools.ts|register_agent",
+    "io.github.CarlosAndreFerreira/moodle-obsidian-mcp|moodle_mcp/server.py|upload_file_to_draft",
+    "io.github.Enigmacker/mcp-authprobe|src/lab/server.ts|get_weather",
+    "io.github.Fizzl13/agent-safety-index|agent-safety-bench/src/exam/mcp.js|agent_safety_exam_start",
+    "io.github.Garitalab5/garita-mcp|lib/vigia.js|detect_poisoned_tool_descriptions",
+    "io.github.Garitalab5/garita-mcp|server.js|detect_hardcoded_secrets_risk",
+    "io.github.Garitalab5/garita-mcp|server.js|detect_path_traversal_risk",
+    "io.github.Garitalab5/garita-mcp|server.js|detect_poisoned_config_files",
+    "io.github.Garitalab5/garita-mcp|server.js|detect_poisoned_tool_descriptions",
+    "io.github.Garitalab5/garita-mcp|test-escudo.js|send_message",
+    "io.github.Garitalab5/garita-mcp|test-rugpull.js|clima",
+    "io.github.Garitalab5/garita-mcp|test-rugpull.js|resumen_diario",
+    "io.github.Garitalab5/garita-mcp|test-rugpull.js|resumen_diario_v2",
+    "io.github.GodSmasher/patchbay|apps/web/app/demo/mcp/route.ts|fetch_doc",
+    "io.github.GodSmasher/patchbay|scripts/validate-finding-schema.ts|delete_everything",
+    "io.github.Kaption-AI/mcp-extension-remote|src/tools.ts|manage_channels",
+    "io.github.Kaption-AI/mcp-extension-remote|src/tools.ts|manage_communities",
+    "io.github.Kaption-AI/mcp-extension|src/tools.ts|manage_channels",
+    "io.github.Kaption-AI/mcp-extension|src/tools.ts|manage_communities",
+    "io.github.Lawatch/dotenv-check|products/mcp/dotenv-check/server.js|compare_env_parsers",
+    "io.github.Lawatch/dotenv-check|products/mcp/dotenv-check/server.js|parse_env_file",
+    "io.github.Lawatch/dotenv-check|products/mcp/dotenv-check/server.js|resolve_env",
+    "io.github.Lawatch/npm-pack-check|products/mcp/npm-pack-check/server.js|why_npm_pack",
+    "io.github.LevapVeeskela/vigil|internal/tools/mcpaudit.go|vigil_mcp_audit",
+    "io.github.NeuralNexusNote/n3mc-workingmemory|n3mc_mcp/tooldefs.py|search_memory",
+    "io.github.POSIdev-community/ptai-mcp|src/local/catalog.ts|set_active_project",
+    "io.github.Project-Gifted1/pg1-threat-intel|api/mcp.mjs|check_repo_trap",
+    "io.github.RohanMuppa/brightspace|src/tools/get-unsaved-course-files.ts|get_unsaved_course_files",
+    "io.github.Ruwad-io/askmywa|whatsapp-go/internal/mcpserver/server.go|send_message",
+    "io.github.SalmanKhan957/zatca-toolkit|packages/mcp/src/server.ts|generate_csr",
+    "io.github.Triodian/obligations-atlas|src/mcp/mcp.js|find_obligations",
+    "io.github.Triodian/obligations-atlas|src/mcp/mcp.js|get_obligation",
+    "io.github.Triodian/obligations-atlas|src/mcp/mcp.js|list_changes",
+    "io.github.YosefHayim/ebay-mcp|src/auth/tokenManagementTools.ts|ebay_exchange_authorization_code",
+    "io.github.YosefHayim/ebay-mcp|src/auth/tokenManagementTools.ts|ebay_get_oauth_url",
+    "io.github.aicanvas-me/aicanvas|mcp/src/tools.ts|validate_usage",
+    "io.github.akutishevsky/nutrition-mcp|src/mcp/tools/metrics.ts|log_weight",
+    "io.github.alexar76/warden|scripts/openwebui-live/fixtures.mjs|send_message",
+    "io.github.avivgerz-hue/vibe-shield|src/mcp/server.ts|vibe_shield_audit_skills",
+    "io.github.brainOS-HQ/brain-os|src/server.ts|entity_read",
+    "io.github.cloudgpu-app/cloudgpu-mcp|src/index.js|upload",
+    "io.github.danilokhury/synabun|mcp-server/src/tools/morelogin.ts|morelogin",
+    "io.github.danoszz/penthera|src/mcp/tools.js|audit_ai_tooling",
+    "io.github.elishosh687-spec/api-supp|main.py|send_audio_message",
+    "io.github.fairquery/email-validator-mx-disposable|mcp/src/index.ts|validate_emails",
+    "io.github.fairquery/llm-data-guard-pii-secrets|mcp/src/index.ts|guard_text",
+    "io.github.fanyzp/ytdlp-mcp|src/index.js|inspect",
+    "io.github.fayzkk889/mcpsense|scripts/mcp-sdk-interop.cjs|record",
+    "io.github.fayzkk889/mcpsense|scripts/product-live-acceptance.mjs|read_record",
+    "io.github.fayzkk889/mcpsense|scripts/security-boundary.test.cjs|record",
+    "io.github.herp75/mcp-cookidoo|server.py|connect_to_cookidoo",
+    "io.github.hiddenjobs/job-search-mcp|src/tools/jobs.ts|search_jobs",
+    "io.github.itsOmidKarami/kraft|src/kraft/mcp.py|add_worker",
+    "io.github.mr0b0t0/plinth|apps/worker/src/mcp/tools/artifacts.ts|{toolName(\"publish_artifact\")}",
+    "io.github.mr0b0t0/plinth|apps/worker/src/mcp/tools/artifacts.ts|{toolName(\"update_artifact\")}",
+    "io.github.mr0b0t0/plinth|apps/worker/src/mcp/tools/sheets.ts|{toolName(\"edit_sheet\")}",
+    "io.github.mr0b0t0/plinth|apps/worker/src/mcp/tools/sheets.ts|{toolName(\"read_sheet\")}",
+    "io.github.mr0b0t0/plinth|apps/worker/src/mcp/tools/uploads.ts|{toolName(\"start_upload\")}",
+    "io.github.navid72m/mcp-behave|targets/poisoned_server.py|notes_analyzer",
+    "io.github.pdxlab/trustmodel-mcp|scripts/verify-scanner.mjs|calendar_event",
+    "io.github.pdxlab/trustmodel-mcp|scripts/verify-scanner.mjs|search_code",
+    "io.github.pdxlab/trustmodel-mcp|scripts/verify-scanner.mjs|send_message",
+    "io.github.pdxlab/trustmodel-mcp|scripts/verify-scanner.mjs|weather_lookup",
+    "io.github.prenzio/rudow-mcp-server|src/tools.ts|list_sdks",
+    "io.github.priberry-data/crumplelab|harness/evil-mcp.mjs|run_tests",
+    "io.github.priberry-data/crumplelab|src/mcp.mjs|crumple_scan",
+    "io.github.priberry-data/greenlitlab|src/mcp.mjs|greenlit_check",
+    "io.github.rebasepro/rebase|packages/mcp/src/index.ts|rebase_cloud_provision",
+    "io.github.reclaimprotocol/builder|packages/agent/src/mcp/tools/authenticate/import.ts|import_credentials",
+    "io.github.reclaimprotocol/builder|packages/agent/src/mcp/tools/authenticate/issue.ts|issue_credentials",
+    "io.github.reclaimprotocol/builder|packages/agent/src/mcp/tools/authenticate/resolve-owner-key.ts|resolve_owner_key",
+    "io.github.reclaimprotocol/builder|packages/agent/src/old/tools/issue-app-credentials.ts|issue_app_credentials",
+    "io.github.seanfenlon/abovo-mcp-server|artifacts/api-server/src/routes/mcp.ts|prepare_abovo_post",
+    "io.github.shipmail-to/shipmail-mcp|src/tools.ts|shipmail_create_transactional_sender",
+    "io.github.sindre-ai/maskin|packages/mcp/src/tools.ts|gmail_send_email",
+    "io.github.sindre-ai/maskin|packages/mcp/src/tools.ts|resend_send_email",
+    "io.github.sota-deploy/sota|src/tools/deploy.ts|deploy",
+    "io.github.theastraway/mind|src/server.ts|mind_sessions",
+    "io.github.tombaldwin/agentlink|src/mcp.js|claim",
+    "io.github.tombaldwin/agentlink|src/mcp.js|send",
+    "io.github.tombaldwin/nattermatic|src/mcp.js|claim",
+    "io.github.tombaldwin/nattermatic|src/mcp.js|send",
+    "io.github.uiNerd16/aicanvas|mcp/src/tools.ts|validate_usage",
+    "io.github.varity-labs/varity-mcp|src/tools/machines.ts|varity_machines_create",
+    "io.github.varity-labs/varity-mcp|src/tools/set-env.ts|varity_set_env",
+    "io.github.vmware-skills/vmware-vks|vmware_vks/mcp_server/_tools_access.py|issue_tkc_kubeconfig",
+    "io.github.wundervault/wundervault-mcp|src/server.ts|vault_save_secret",
+    "io.github.yangzichao/mcp-server-overleaf|src/tools/editing/uploadFileTool.ts|upload_file",
+    "io.github.zaplitny/atimelogger-mcp|src/tools/activities.ts|update_interval",
+    "io.github.zaplitny/atimelogger-mcp|src/tools/types.ts|archive_activity_type",
+    "io.sota/mcp|src/tools/deploy.ts|deploy",
+    "network.skv/skv|mcp/mcp_skv.py|turn",
+    "org.indianopinion/news|src/tools.js|close_account"
+  ],
+  "repos_checked": 33781,
+  "repos_cloned": 12895,
+  "resolved_share": 0.441,
+  "servers": 69230,
+  "servers_with_repo": 44018,
+  "tools": 39416215,
+  "tools_unique": 377794
+}
