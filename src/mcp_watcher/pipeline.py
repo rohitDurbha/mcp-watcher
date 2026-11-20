@@ -8,7 +8,7 @@ directory, which the workflow stores on the ``data`` branch.
 from __future__ import annotations
 
 import gzip
-import io
+import hashlib
 import json
 import multiprocessing
 import shutil
@@ -56,13 +56,14 @@ class Job:
 
 
 def write_gz_jsonl(path: Path, records: Iterable[dict]) -> None:
-    """Gzip with a fixed timestamp so identical data gives identical bytes."""
-    buf = io.BytesIO()
-    with gzip.GzipFile(fileobj=buf, mode="wb", mtime=0) as gz:
+    """Gzip with a fixed timestamp and no file name so identical data gives identical bytes.
+
+    Records stream straight to disk, because the per-server files run to millions of rows.
+    """
+    with open(path, "wb") as fh, gzip.GzipFile(filename="", fileobj=fh, mode="wb", mtime=0) as gz:
         for record in records:
             line = json.dumps(record, ensure_ascii=False, sort_keys=True) + "\n"
             gz.write(line.encode("utf-8"))
-    path.write_bytes(buf.getvalue())
 
 
 def read_gz_jsonl(path: Path) -> list[dict]:
@@ -99,13 +100,15 @@ def _redacted(tool: Tool) -> Tool:
     return replace(tool, description=redact(tool.description), params=params)
 
 
-def _flag_ids(findings: list[dict]) -> set[str]:
-    return {
-        f"{r['server_name']}|{r['path']}|{r['name']}" for r in findings if r["level"] in FLAGGED
-    }
+def _flag_id(record: dict) -> str:
+    return f"{record['server_name']}|{record['path']}|{record['name']}"
 
 
-def _flagged(tools: list[Tool], findings: list[dict]) -> Iterable[dict]:
+def _flag_ids(findings: Iterable[dict]) -> set[str]:
+    return {_flag_id(r) for r in findings if r["level"] in FLAGGED}
+
+
+def _flagged(tools: Iterable[Tool], findings: Iterable[dict]) -> Iterable[dict]:
     """Flagged findings with the text they were found in, small enough to publish."""
     for tool, record in zip(tools, findings, strict=True):
         if record["level"] in PUBLISHED:
@@ -113,8 +116,51 @@ def _flagged(tools: list[Tool], findings: list[dict]) -> Iterable[dict]:
             yield record | text
 
 
-def _share(tools: list[Tool]) -> float | None:
-    return round(sum(t.description_resolved for t in tools) / len(tools), 4) if tools else None
+def _previous_flag_ids(path: Path) -> set[str]:
+    """Streamed, because the previous findings file has a row per server and tool."""
+    if not path.exists():
+        return set()
+    with gzip.open(path, "rt", encoding="utf-8") as fh:
+        return _flag_ids(json.loads(line) for line in fh if line.strip())
+
+
+def _previous_tool_groups(path: Path) -> tuple[list[list[Tool]], dict[str, int]]:
+    """Previous tools, kept once per distinct tool list rather than once per server.
+
+    Rows are written grouped by server, and servers built from the same repo folder at the
+    same commit carry identical rows apart from the server name, so they share one list.
+    """
+    groups: list[list[Tool]] = []
+    by_server: dict[str, int] = {}
+    seen: dict[bytes, int] = {}
+    if not path.exists():
+        return groups, by_server
+
+    def close(server: str | None, block: list[str]) -> None:
+        if server is None:
+            return
+        if server in by_server:
+            raise ValueError(f"tools for {server} are not contiguous in {path}")
+        digest = hashlib.sha256("\n".join(block).encode("utf-8")).digest()
+        if digest not in seen:
+            seen[digest] = len(groups)
+            groups.append([tool_from_row(json.loads(line)) for line in block])
+        by_server[server] = seen[digest]
+
+    current: str | None = None
+    block: list[str] = []
+    with gzip.open(path, "rt", encoding="utf-8") as fh:
+        for line in fh:
+            if not line.strip():
+                continue
+            row = json.loads(line)
+            server = row.pop("server_name")
+            if server != current:
+                close(current, block)
+                current, block = server, []
+            block.append(json.dumps(row, ensure_ascii=False, sort_keys=True))
+    close(current, block)
+    return groups, by_server
 
 
 def run_pipeline(
@@ -146,9 +192,11 @@ def run_pipeline(
         prev_state.get("extractor_version") == EXTRACTOR_VERSION
         and (prev_dir / "tools.jsonl.gz").exists()
     )
-    prev_tools: dict[str, list[dict]] = defaultdict(list)
-    for row in read_gz_jsonl(prev_dir / "tools.jsonl.gz") if prev_dir else []:
-        prev_tools[row["server_name"]].append(row)
+    # Servers that share a repo folder share one tool list, so a repo listed under hundreds of
+    # registry entries costs memory and scoring time once instead of once per entry.
+    groups, prev_group = (
+        _previous_tool_groups(prev_dir / "tools.jsonl.gz") if prev_dir else ([], {})
+    )
 
     jobs = _jobs(servers)
     urls = sorted({j.repo_url for j in jobs if j.repo_url})
@@ -228,8 +276,7 @@ def run_pipeline(
                     continue
                 status = "ok" if ex.files_scanned else "no_supported_source"
                 info = {"status": status, "commit": commit, "files_scanned": ex.files_scanned}
-                tools = [replace(t, server_name=j.server_name) for t in ex.tools]
-                results.append((j, info, tools))
+                results.append((j, info, ex.tools))  # the same list for every job on the folder
         finally:
             if Path(path).resolve().is_relative_to(Path(cache).resolve()):
                 shutil.rmtree(path, ignore_errors=True)  # keep runner disk usage flat
@@ -256,10 +303,18 @@ def run_pipeline(
             parsers.shutdown()
     if skipped:
         _log(f"time budget reached, {skipped} repos left pending for the next run")
-    fresh = {j.key: (info, tools) for batch in batches for j, info, tools in batch}
+    fresh: dict[str, tuple[dict, int | None]] = {}
+    fresh_group: dict[tuple[str, str | None], int] = {}
+    for batch in batches:
+        for j, info, tools in batch:
+            folder = (j.repo_url, j.subfolder)
+            if tools and folder not in fresh_group:
+                fresh_group[folder] = len(groups)
+                groups.append([_redacted(t) for t in tools])
+            fresh[j.key] = (info, fresh_group.get(folder) if tools else None)
 
     state_jobs: dict[str, dict] = {}
-    all_tools: list[Tool] = []
+    entries: list[tuple[str, int]] = []  # (server name, tool group) in output order
     reused = 0
     for job in jobs:
         base = {"repo_url": job.repo_url, "subfolder": job.subfolder}
@@ -268,49 +323,86 @@ def run_pipeline(
             continue
         sha, err = heads[job.repo_url]
         if job.key in fresh:
-            info, tools = fresh[job.key]
-            tools = [_redacted(t) for t in tools]
+            info, gid = fresh[job.key]
         elif sha and reusable(job):
             reused += 1
             kept = ("status", "commit", "files_scanned")
             info = {k: v for k, v in prev_jobs[job.key].items() if k in kept}
-            tools = [tool_from_row(r) for r in prev_tools.get(job.key, [])]
+            gid = prev_group.get(job.key)
         elif job.repo_url in to_extract:  # ran out of time before this repo started
             prev = prev_jobs.get(job.key, {})
             info = {"status": "pending", "commit": prev.get("commit")}
-            tools = [tool_from_row(r) for r in prev_tools.get(job.key, [])]
+            gid = prev_group.get(job.key)
         elif job.key in prev_jobs and prev_jobs[job.key].get("status") in ("ok", "stale"):
             info = {"status": "stale", "commit": prev_jobs[job.key].get("commit"), "error": err}
-            tools = [tool_from_row(r) for r in prev_tools.get(job.key, [])]
+            gid = prev_group.get(job.key)
         else:
-            info, tools = {"status": "unreachable", "error": err}, []
-        state_jobs[job.key] = {**base, **info, "tools": len(tools)}
-        all_tools.extend(tools)
+            info, gid = {"status": "unreachable", "error": err}, None
+        count = len(groups[gid]) if gid is not None else 0
+        state_jobs[job.key] = {**base, **info, "tools": count}
+        if count:
+            entries.append((job.key, gid))
 
-    all_tools.sort(key=lambda t: (t.server_name or "", *t.sort_key()))
-    _log(f"scoring {len(all_tools)} tools")
-    findings = score_tools(all_tools, model)
+    # Score each distinct tool list once, then hand the records to every server that uses it.
+    used = sorted({gid for _, gid in entries})
+    for gid in used:
+        groups[gid].sort(key=Tool.sort_key)
+    unique_tools = [t for gid in used for t in groups[gid]]
+    total = sum(len(groups[gid]) for _, gid in entries)
+    _log(f"scoring {len(unique_tools)} distinct tools behind {total} server tools")
+    scored = score_tools(unique_tools, model)
+    records: dict[int, list[dict]] = {}
+    begin = 0
+    for gid in used:
+        records[gid] = scored[begin : begin + len(groups[gid])]
+        begin += len(groups[gid])
+    tool_rows = {gid: [t.to_dict() for t in groups[gid]] for gid in used}
+
+    def expanded() -> Iterable[tuple[str, int, int]]:
+        for name, gid in entries:
+            for i in range(len(groups[gid])):
+                yield name, gid, i
+
+    def tool_out() -> Iterable[dict]:
+        for name, gid, i in expanded():
+            yield tool_rows[gid][i] | {"server_name": name}
+
+    def findings_out() -> Iterable[dict]:
+        for name, gid, i in expanded():
+            yield records[gid][i] | {"server_name": name}
+
+    def tools_in_order() -> Iterable[Tool]:
+        for _, gid, i in expanded():
+            yield groups[gid][i]
+
     _log("writing outputs")
-    prev_findings = read_gz_jsonl(prev_dir / "findings.jsonl.gz") if prev_dir else []
-    now_flags, then_flags = _flag_ids(findings), _flag_ids(prev_findings)
+    then_flags = _previous_flag_ids(prev_dir / "findings.jsonl.gz") if prev_dir else set()
 
     out = Path(out)
     out.mkdir(parents=True, exist_ok=True)
     write_gz_jsonl(
         out / "servers.jsonl.gz", (s.to_dict() for s in sorted(servers, key=lambda s: s.name))
     )
-    write_gz_jsonl(out / "tools.jsonl.gz", (t.to_dict() for t in all_tools))
-    write_gz_jsonl(out / "findings.jsonl.gz", findings)
-    write_gz_jsonl(out / "flagged.jsonl.gz", _flagged(all_tools, findings))
+    write_gz_jsonl(out / "tools.jsonl.gz", tool_out())
+    write_gz_jsonl(out / "findings.jsonl.gz", findings_out())
+    write_gz_jsonl(out / "flagged.jsonl.gz", _flagged(tools_in_order(), findings_out()))
     write_json(out / "state.json", {"extractor_version": EXTRACTOR_VERSION, "jobs": state_jobs})
 
-    levels = Counter(r["level"] for r in findings)
-    distinct = {(r["repo_url"], r["path"], r["line"], r["name"]): r["level"] for r in findings}
-    unique_levels = Counter(distinct.values())
+    levels: Counter[str] = Counter()
+    now_flags: set[str] = set()
+    distinct: dict[tuple, str] = {}
+    resolved = 0
     per_repo: dict[str, dict] = defaultdict(lambda: {"servers": set(), "tools": set()})
-    for t in all_tools:
-        per_repo[t.repo_url]["servers"].add(t.server_name)
+    for name, gid, i in expanded():
+        r, t = records[gid][i], groups[gid][i]
+        levels[r["level"]] += 1
+        if r["level"] in FLAGGED:
+            now_flags.add(_flag_id(r | {"server_name": name}))
+        distinct[(r["repo_url"], r["path"], r["line"], r["name"])] = r["level"]
+        resolved += t.description_resolved
+        per_repo[t.repo_url]["servers"].add(name)
         per_repo[t.repo_url]["tools"].add((t.path, t.line, t.name))
+    unique_levels = Counter(distinct.values())
     largest = sorted(
         (
             {"repo_url": url, "servers": len(v["servers"]), "tools": len(v["tools"])}
@@ -328,9 +420,9 @@ def run_pipeline(
         "repos_checked": len(urls),
         "repos_cloned": len(to_extract),
         "jobs_reused": reused,
-        "tools": len(all_tools),
+        "tools": total,
         "tools_unique": sum(len(v["tools"]) for v in per_repo.values()),
-        "resolved_share": _share(all_tools),
+        "resolved_share": round(resolved / total, 4) if total else None,
         "levels": {k: levels[k] for k in ("high", "medium", "watch", "low", "none")},
         "flagged_unique": {k: unique_levels[k] for k in ("high", "medium", "watch")},
         "new_flags": sorted(now_flags - then_flags) if prev_dir else [],

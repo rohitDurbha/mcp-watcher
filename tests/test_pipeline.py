@@ -191,6 +191,39 @@ def test_shared_repo_folder_is_extracted_once_for_all_its_servers(tmp_path, monk
     assert len(by_server["io.github.acme/one"]) == len(by_server["io.github.acme/two"]) > 0
 
 
+def test_folder_shared_by_many_servers_is_scored_once_but_published_per_server(
+    tmp_path, monkeypatch
+):
+    # Awesome-list repos sit behind hundreds of registry entries, and holding one copy of
+    # their tools per entry ran the daily runner out of memory.
+    import mcp_watcher.pipeline as pipeline
+
+    scored = []
+    real = pipeline.score_tools
+
+    def counting(tools, model=None):
+        scored.append(len(tools))
+        return real(tools, model)
+
+    monkeypatch.setattr(pipeline, "score_tools", counting)
+    names = [f"io.github.acme/n{i:02}" for i in range(40)]
+    servers = [Server(name=n, description="", version="1", repo_url=A) for n in names]
+    forge = FakeForge({A: "a" * 40})
+    sources = Sources(remote_head=forge.remote_head, clone=forge.clone)
+    common = dict(cache=tmp_path / "cache", now="2026-11-02T00:00:00Z", sources=sources)
+    first = run_pipeline(servers, previous=None, out=tmp_path / "day1", **common)
+    second = run_pipeline(servers, previous=tmp_path / "day1", out=tmp_path / "day2", **common)
+
+    tools = rows(tmp_path / "day2" / "tools.jsonl.gz")
+    per_server = len(tools) // len(names)
+    assert per_server > 0 and sorted({t["server_name"] for t in tools}) == names
+    assert scored == [per_server, per_server]
+    assert first["tools"] == second["tools"] == per_server * len(names)
+    assert rows(tmp_path / "day2" / "findings.jsonl.gz") == rows(
+        tmp_path / "day1" / "findings.jsonl.gz"
+    )
+
+
 def test_progress_is_logged_to_stderr(tmp_path, capsys):
     forge = FakeForge({A: "a" * 40, B: "b" * 40})
     run(forge, tmp_path, "day1")
