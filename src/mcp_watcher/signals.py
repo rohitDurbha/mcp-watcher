@@ -108,8 +108,9 @@ RULES: tuple[Rule, ...] = (
        "Contains an email address"),
     # Overriding earlier instructions or hijacking the assistant's behavior.
     _r("ignore-instructions", "override", "high",
-       r"\b(ignore|disregard|forget)\s+(all\s+)?(the\s+)?(previous|prior|above|earlier|other)\s+"
-       r"(instructions|rules|prompts?|messages?)\b",
+       r"\b(ignore|disregard|forget|override|bypass|overwrite|circumvent)\s+(all\s+)?(the\s+)?"
+       r"(previous|prior|above|earlier|other)\s+"
+       r"(instructions|rules|prompts?|messages?|guidelines?|restrictions?)\b",
        "Tries to override earlier instructions"),
     _r("from-now-on", "override", "high",
        r"\bfrom\s+now\s+on\b",
