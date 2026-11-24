@@ -106,11 +106,17 @@ RULES: tuple[Rule, ...] = (
        "Mentions a request capture service"),
     _r("email-address", "exfiltration", "low", r"\b[\w.+-]+@[\w-]+\.[a-z]{2,}\b",
        "Contains an email address"),
-    # Overriding earlier instructions.
+    # Overriding earlier instructions or hijacking the assistant's behavior.
     _r("ignore-instructions", "override", "high",
        r"\b(ignore|disregard|forget)\s+(all\s+)?(the\s+)?(previous|prior|above|earlier|other)\s+"
        r"(instructions|rules|prompts?|messages?)\b",
        "Tries to override earlier instructions"),
+    _r("from-now-on", "override", "high",
+       r"\bfrom\s+now\s+on\b",
+       "Tries to change the assistant's behavior going forward"),
+    _r("your-new-role", "override", "high",
+       r"\byour\s+new\s+(role|persona|identity|behavior)\b",
+       "Assigns a new role or identity to the assistant"),
     # Pressure that makes the model comply.
     _r("tool-will-not-work", "coercion", "high",
        r"\botherwise\b[^.\n]{0,30}\b(will\s+not|won't|will\s+fail|does\s+not|doesn't)\s+work\b",
