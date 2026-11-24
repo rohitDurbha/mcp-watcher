@@ -117,6 +117,12 @@ RULES: tuple[Rule, ...] = (
     _r("your-new-role", "override", "high",
        r"\byour\s+new\s+(role|persona|identity|behavior)\b",
        "Assigns a new role or identity to the assistant"),
+    _r("you-are-now", "override", "medium",
+       r"\byou\s+are\s+now\s+(?:a|an)\b",
+       "Tells the assistant it is now a different entity"),
+    _r("pretend-you-are", "override", "medium",
+       r"\bpretend\s+(?:you\s+are|to\s+be)\b",
+       "Asks the assistant to adopt a persona"),
     # Pressure that makes the model comply.
     _r("tool-will-not-work", "coercion", "high",
        r"\botherwise\b[^.\n]{0,30}\b(will\s+not|won't|will\s+fail|does\s+not|doesn't)\s+work\b",
